@@ -2,10 +2,10 @@ import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-public class Send0 implements Runnable{
+public class Send implements Runnable{
     private Socket socket;
     private String role;
-    Send0(Socket socket, String role){
+    Send(Socket socket, String role){
         this.socket = socket;
         this.role = role;
     }
@@ -13,7 +13,7 @@ public class Send0 implements Runnable{
     public void run(){
         try {
             DataOutputStream out = new DataOutputStream(socket.getOutputStream());
-
+            DES des = new DES("pass");
             while(true){
                 String send = new BufferedReader(new InputStreamReader(System.in)).readLine();
 
@@ -48,9 +48,15 @@ public class Send0 implements Runnable{
 //                send = des.userEn(send);
 //                out.writeUTF(send);
 
+                String[] strs = toParts(send);
+                String str = "";
+                for(int i=0; i<strs.length; i++){
+                    //System.out.println("加密前："+strs[i]);
+                    str += "@"+des.userEn(strs[i]);
+                    //System.out.println("加密后："+str);
+                }
 
-
-                out.writeUTF(send);
+                out.writeUTF(str);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -101,6 +107,4 @@ public class Send0 implements Runnable{
         }
         return (count % 2 == 0);
     }
-
-
 }
