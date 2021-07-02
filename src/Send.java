@@ -107,6 +107,4 @@ public class Send implements Runnable{
         }
         return (count % 2 == 0);
     }
-
-
 }

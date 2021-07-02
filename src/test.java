@@ -1,4 +1,6 @@
 import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class test {
     public static void main(String[] args) throws UnsupportedEncodingException {
@@ -40,5 +42,11 @@ public class test {
 //            }
 //        }
         System.out.println(!(4%2 == 0));
+
+        Map<String , String> map = new HashMap();
+        map.put("dd","af");
+        System.out.println(map.get("s"));
+        System.out.println(map.get("dd"));
+        System.out.println(map.get("ss00") == null);
     }
 }

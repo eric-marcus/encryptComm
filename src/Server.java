@@ -1,4 +1,5 @@
 import java.io.*;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -10,6 +11,8 @@ public class Server {
             ServerSocket server = new ServerSocket(port);
             Socket socket = server.accept();
             socket.setSoTimeout(200 * 1000);
+            InetAddress ip = socket.getInetAddress();
+
 
             Runnable runnable = new Receive(socket,"Server");
             Runnable runnable1 = new Send(socket,"Server");

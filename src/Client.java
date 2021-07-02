@@ -3,8 +3,8 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 
 public class Client {
-    private static String ip="127.0.0.1";
-    private static int port=8089;
+    private static String ip="47.114.48.8";
+    private static int port=7500;
 
     public static void main(String[] args) {
         try {
