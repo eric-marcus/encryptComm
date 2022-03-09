@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableLayout android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+
+    <TableRow
+        android:layout_height="match_parent"
+        android:layout_width="match_parent">
+
+        <Button
+            android:id="@+id/button_main_start"
+            android:text="start"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            tools:ignore="MissingConstraints,OnClick" />
+
+        <Button
+            android:id="@+id/button_main_stop"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            android:text="stop"
+            tools:ignore="MissingConstraints" />
+
+        <Button
+            android:id="@+id/button_main_goFir"
+            android:layout_margin="20dp"
+            android:text="goFirst"
+            tools:ignore="MissingConstraints" />
+
+
+    </TableRow>
+
+</TableLayout>
