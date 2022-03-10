@@ -13,7 +13,17 @@ import android.widget.Button;
 
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
+import java.io.IOException;
+import java.net.Socket;
+import java.net.UnknownHostException;
+
 public class SocketService extends Service {
+
+    private static String ip="47.118.48.8";
+    //    private static String ip = "bigcat.tech";
+    private static int port=7501;
+    protected String TAG = "SocketService";
+
     public SocketService() {
     }
 
@@ -25,27 +35,33 @@ public class SocketService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId){
-        Log.w("sdfsdf", "onStartCommand:" );
-        Intent intent1 = new Intent("service");
-        intent1.putExtra("info","hi from service");
-
-//        this.sendBroadcast(intent1);
-//        this.getBaseContext().sendBroadcast(intent1);
-
-        LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(this);
-        localBroadcastManager.sendBroadcast(intent1);
-
-
-//        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
-//        Intent intent2 = new Intent("service");
-//        intent2.putExtra("info","delay info");
-//        alarmManager.set(AlarmManager.ELAPSED_REALTIME, (long)(SystemClock.elapsedRealtime()+2000), PendingIntent.getBroadcast(this,0,intent2,0));
-
+        Log.w(TAG, "onStartCommand: start" );
+        Thread thread = new Thread(new SocketThread());
+        thread.start();
         return START_STICKY;
     }
 
     @Override
     public void onDestroy(){
         super.onDestroy();
+    }
+
+    class SocketThread implements Runnable{
+        public void run(){
+//            Socket socket = null;
+//            try {
+//                socket = new Socket(ip,port);
+//                socket.setSoTimeout(200 * 1000);
+//                Log.w(TAG, "socket connected");
+//                Runnable runnable = new Receive(socket,"Client");
+//                Runnable runnable1 = new Send(socket,"Client");
+//                Thread thread = new Thread(runnable);
+//                Thread thread1 = new Thread(runnable1);
+//                thread.start();
+//                thread1.start();
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+        }
     }
 }

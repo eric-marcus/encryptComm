@@ -22,10 +22,22 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.BufferedReader;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PipedReader;
+import java.io.PipedWriter;
 import java.io.UnsupportedEncodingException;
+import java.net.InetAddress;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.net.UnknownHostException;
 
 public class FirstActivity extends AppCompatActivity {
     protected String TAG = "firstActivity";
+    private int port = 5886;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
@@ -35,17 +47,39 @@ public class FirstActivity extends AppCompatActivity {
         setContentView(R.layout.first_layout);
         View view = findViewById(R.id.button_1);
 
-        startService(new Intent(getBaseContext(),SocketService.class));
+        EditText input = (EditText)  findViewById(R.id.socketInput);
+        TextView receive = (TextView) findViewById(R.id.socketReceive);
+        Button send = (Button) findViewById(R.id.send);
+        PipedWriter writer = new PipedWriter();
+        PipedReader reader = new PipedReader();
+        Thread thread = new Thread(new SocketThread(writer,reader));
+        thread.start();
 
-//        Intent intent = getIntent();
-//        String data = intent.getStringExtra("data");
-//        Log.e(TAG, data );
+        send.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    writer.write(input.getText().toString());
+                    writer.flush();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
 
-        Log.d(TAG, "onCreate: view test");
+
+
+
+//        startService(new Intent(this,ServerSocketService.class));
+//        startService(new Intent(this,SocketService.class));
+
+
+        Log.w(TAG, "onCreate: view test");
         Button button = (Button) view;
         Menu menu = findViewById(R.id.first_menu);
         EditText text1 = (EditText) findViewById(R.id.Text1);
         TextView text2 = (TextView) findViewById(R.id.Text2);
+
 
 
         LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(this);
@@ -101,17 +135,6 @@ public class FirstActivity extends AppCompatActivity {
         });
     }
 
-//    protected View rewrite(View view){
-//        view.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Toast.makeText(FirstActivity.this,"ss",Toast.LENGTH_LONG).show();
-//                DES des = new DES();
-//
-//            }
-//        });
-//        return view;
-//    }
 
 
     public boolean onCreateOptionsMenu(Menu menu){
@@ -129,14 +152,6 @@ public class FirstActivity extends AppCompatActivity {
         return true;
     }
 
-//    public void startService(View view){
-//        startService(new Intent(getBaseContext(),SocketService.class));
-//    }
-//
-//    public void stopService(View view){
-//        stopService(new Intent(getBaseContext(),SocketService.class));
-//    }
-
 
     private class BroadcastReceiver extends android.content.BroadcastReceiver {
         @Override
@@ -146,4 +161,108 @@ public class FirstActivity extends AppCompatActivity {
             Log.w(TAG, info );
         }
     }
+
+    class SocketThread implements Runnable{
+        PipedWriter writer;
+        PipedReader reader;
+
+        public SocketThread(PipedWriter w, PipedReader r){
+            writer = w;
+            reader = r;
+        }
+
+        @Override
+        public void run(){
+            Log.w(TAG, "run: " );
+            Socket socket = null;
+            try {
+                socket = new Socket("192.168.43.75",port);
+                if(socket == null)
+                    Log.w(TAG, "run: no connect" );
+                else {
+                    Log.w(TAG, "run: connected" );
+                }
+
+                socket.setSoTimeout(200 * 1000);
+                Log.w(TAG, "socket connected");
+
+
+                Thread thread = new Thread(new Receive(socket,"Client",reader));
+                Thread thread1 = new Thread(new Send(socket,"Client", writer));
+                thread.start();
+                thread1.start();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+
+
+    class Receive implements Runnable{
+        private Socket socket;
+        private String role;
+        private PipedWriter w = new PipedWriter();
+        Receive(Socket socket, String role , PipedReader r) throws IOException {
+            System.out.println("here");
+            this.socket = socket;
+            this.role = role;
+            this.w.connect(r);
+        }
+
+        @Override
+        public void run(){
+
+            try {
+                DataInputStream input = new DataInputStream(socket.getInputStream());
+//            DES des = new DES("pass");
+                TextView display = (TextView) findViewById(R.id.socketReceive);
+                while (true){
+                    String receive = input.readUTF();
+                    if(!receive.isEmpty()){
+                        display.setText(receive);
+                    }
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+
+
+    class Send implements Runnable{
+        private Socket socket;
+        private String role;
+        private PipedReader r = new PipedReader();
+        Send(Socket socket, String role, PipedWriter w) throws IOException {
+            this.socket = socket;
+            this.role = role;
+            this.r.connect(w);
+        }
+
+        @Override
+        public void run() {
+            int i = 0;
+            String str="";
+            while (true){
+                try {
+                    if (!((i=r.read()) != -1)) break;
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                str = str + ((char) i);
+            }
+
+            DataOutputStream out = null;
+            try {
+                out = new DataOutputStream(socket.getOutputStream());
+                Log.w(TAG, "onClick: "+str );
+                out.writeUTF(str);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
 }

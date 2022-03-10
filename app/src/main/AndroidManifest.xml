@@ -3,6 +3,7 @@
     package="com.example.app_1">
 
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -11,10 +12,11 @@
         android:roundIcon="@drawable/painting2"
         android:supportsRtl="true"
         android:theme="@style/Theme.App1">
+
         <service
             android:name=".ServerSocketService"
             android:enabled="true"
-            android:exported="true"></service>
+            android:exported="true"/>
         <service
             android:name=".SocketService"
             android:enabled="true"
