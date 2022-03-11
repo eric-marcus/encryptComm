@@ -59,8 +59,10 @@ public class FirstActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 try {
-                    writer.write(input.getText().toString());
+                    Log.w(TAG, "onClick: "+input.getText().toString() );
+                    writer.write("ok");
                     writer.flush();
+                    Log.w(TAG, "onClick: flush" );
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -162,9 +164,13 @@ public class FirstActivity extends AppCompatActivity {
         }
     }
 
+
+
     class SocketThread implements Runnable{
         PipedWriter writer;
         PipedReader reader;
+        Thread threadSend;
+        Thread threadRece;
 
         public SocketThread(PipedWriter w, PipedReader r){
             writer = w;
@@ -177,6 +183,7 @@ public class FirstActivity extends AppCompatActivity {
             Socket socket = null;
             try {
                 socket = new Socket("192.168.43.75",port);
+                Log.w(TAG, "run: "+socket.toString() );
                 if(socket == null)
                     Log.w(TAG, "run: no connect" );
                 else {
@@ -187,10 +194,10 @@ public class FirstActivity extends AppCompatActivity {
                 Log.w(TAG, "socket connected");
 
 
-                Thread thread = new Thread(new Receive(socket,"Client",reader));
-                Thread thread1 = new Thread(new Send(socket,"Client", writer));
-                thread.start();
-                thread1.start();
+                threadRece = new Thread(new Receive(socket,"Client",reader));
+                threadSend = new Thread(new Send(socket,"Client", writer));
+                threadRece.start();
+                threadSend.start();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -220,6 +227,7 @@ public class FirstActivity extends AppCompatActivity {
                 while (true){
                     String receive = input.readUTF();
                     if(!receive.isEmpty()){
+                        w.write(receive);
                         display.setText(receive);
                     }
                 }
@@ -239,27 +247,30 @@ public class FirstActivity extends AppCompatActivity {
             this.socket = socket;
             this.role = role;
             this.r.connect(w);
+            Log.w(TAG, "Send: bind" );
         }
 
         @Override
         public void run() {
             int i = 0;
             String str="";
-            while (true){
-                try {
-                    if (!((i=r.read()) != -1)) break;
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                str = str + ((char) i);
-            }
-
-            DataOutputStream out = null;
+            Log.w(TAG, "run: "+socket.toString() );
             try {
-                out = new DataOutputStream(socket.getOutputStream());
-                Log.w(TAG, "onClick: "+str );
-                out.writeUTF(str);
-            } catch (IOException e) {
+                while(true) {
+                    if (r.ready()) {
+                        r.read();
+                        r.read();
+                        str = ((EditText) findViewById(R.id.socketInput)).getText().toString();
+                        Log.w(TAG, "str " + str);
+                        DataOutputStream out = null;
+
+                        out = new DataOutputStream(socket.getOutputStream());
+                        Log.w(TAG, "260: " + str);
+                        out.writeUTF(str);
+                        continue;
+                    }
+                }
+            } catch (IOException  e) {
                 e.printStackTrace();
             }
         }
