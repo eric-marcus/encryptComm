@@ -37,7 +37,10 @@ import java.net.UnknownHostException;
 
 public class FirstActivity extends AppCompatActivity {
     protected String TAG = "firstActivity";
+//    private String ip="bigcat.tech";
+    private String ip = "192.168.43.75";
     private int port = 5886;
+
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
@@ -47,19 +50,20 @@ public class FirstActivity extends AppCompatActivity {
         setContentView(R.layout.first_layout);
         View view = findViewById(R.id.button_1);
 
-        EditText input = (EditText)  findViewById(R.id.socketInput);
-        TextView receive = (TextView) findViewById(R.id.socketReceive);
+        EditText socketInput = (EditText)  findViewById(R.id.socketInput);
+        TextView socketReceive = (TextView) findViewById(R.id.socketReceive);
         Button send = (Button) findViewById(R.id.send);
         PipedWriter writer = new PipedWriter();
         PipedReader reader = new PipedReader();
         Thread thread = new Thread(new SocketThread(writer,reader));
         thread.start();
+        Log.w(TAG, "socket thread start ." );
 
         send.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 try {
-                    Log.w(TAG, "onClick: "+input.getText().toString() );
+                    Log.w(TAG, "onClick: "+socketInput.getText().toString() );
                     writer.write("ok");
                     writer.flush();
                     Log.w(TAG, "onClick: flush" );
@@ -85,8 +89,13 @@ public class FirstActivity extends AppCompatActivity {
 
 
         LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(this);
-        BroadcastReceiver receiver = new BroadcastReceiver();
-        localBroadcastManager.registerReceiver(receiver,new IntentFilter("service"));
+        BroadcastReceiver receiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                socketReceive.setText(intent.getStringExtra("info"));
+            }
+        };
+        localBroadcastManager.registerReceiver(receiver,new IntentFilter("receive"));
 
 
 
@@ -155,14 +164,7 @@ public class FirstActivity extends AppCompatActivity {
     }
 
 
-    private class BroadcastReceiver extends android.content.BroadcastReceiver {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            Log.w(TAG, "onReceive: " );
-            String info = intent.getStringExtra("info");
-            Log.w(TAG, info );
-        }
-    }
+
 
 
 
@@ -182,7 +184,7 @@ public class FirstActivity extends AppCompatActivity {
             Log.w(TAG, "run: " );
             Socket socket = null;
             try {
-                socket = new Socket("192.168.43.75",port);
+                socket = new Socket(ip,port);
                 Log.w(TAG, "run: "+socket.toString() );
                 if(socket == null)
                     Log.w(TAG, "run: no connect" );
@@ -226,10 +228,17 @@ public class FirstActivity extends AppCompatActivity {
                 TextView display = (TextView) findViewById(R.id.socketReceive);
                 while (true){
                     String receive = input.readUTF();
-                    if(!receive.isEmpty()){
-                        w.write(receive);
-                        display.setText(receive);
-                    }
+
+                    Intent intent = new Intent("receive");
+                    LocalBroadcastManager broadcastManager = LocalBroadcastManager.getInstance(getBaseContext());
+                    intent.putExtra("info", receive);
+                    broadcastManager.sendBroadcast(intent);
+
+
+//                    if(!receive.isEmpty()){
+//                        w.write(receive);
+//                        display.setText(receive);
+//                    }
                 }
             } catch (IOException e) {
                 e.printStackTrace();
