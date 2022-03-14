@@ -1,5 +1,8 @@
 ## <center> 基于socket的DES加密通讯 </center>
 <br></br>
+### 更新至gitee https://gitee.com/eric-bigcat/encryptComm.git
+
+
 - DES加密 / 解密
 1. 字符根据GBK编码转为64位2进制进行加密
 2. 用Base64再次加密为可打印字符作为密文进行通讯传输 
