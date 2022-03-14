@@ -1,4 +1,7 @@
 ## C/S模式 加密通讯
+
+### 更新至gitee https://gitee.com/eric-bigcat/encryptComm.git
+
 - 简介
    - 关键技术/理念 socket , DES , p2p 
    - 用socket作为通讯机制，DES加密内容，进行点对点的通讯
