@@ -46,49 +46,22 @@ public class FirstActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.first_layout);
-        View view = findViewById(R.id.button_1);
 
         EditText socketInput = (EditText)  findViewById(R.id.socketInput);
         TextView socketReceive = (TextView) findViewById(R.id.socketReceive);
         Button send = (Button) findViewById(R.id.send);
-        PipedWriter writer = new PipedWriter();
-        PipedReader reader = new PipedReader();
-        Thread thread = new Thread(new SocketThread(writer,reader));
-        thread.start();
-        Log.w(TAG, "socket thread start ." );
-
-        send.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                try {
-                    Log.w(TAG, "onClick: "+socketInput.getText().toString() );
-                    writer.write("ok");
-                    writer.flush();
-                    Log.w(TAG, "onClick: flush" );
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-
-
-
-
-//        startService(new Intent(this,ServerSocketService.class));
-//        startService(new Intent(this,SocketService.class));
-
-
-        Log.w(TAG, "onCreate: view test");
-        Button button = (Button) view;
+        Button button = (Button) findViewById(R.id.button_1);
         Menu menu = findViewById(R.id.first_menu);
         EditText text1 = (EditText) findViewById(R.id.Text1);
         TextView text2 = (TextView) findViewById(R.id.Text2);
 
-
-
+        Thread socketThread = new Thread(new SocketThread());
         LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(this);
+        Intent intent = new Intent("socketSend");
+
+
+
         BroadcastReceiver receiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -96,6 +69,18 @@ public class FirstActivity extends AppCompatActivity {
             }
         };
         localBroadcastManager.registerReceiver(receiver,new IntentFilter("receive"));
+
+        socketThread.start();
+
+        send.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                intent.putExtra("send",socketInput.getText().toString());
+                localBroadcastManager.sendBroadcast(intent);
+
+            }
+        });
+
 
 
 
@@ -169,15 +154,9 @@ public class FirstActivity extends AppCompatActivity {
 
 
     class SocketThread implements Runnable{
-        PipedWriter writer;
-        PipedReader reader;
         Thread threadSend;
         Thread threadRece;
 
-        public SocketThread(PipedWriter w, PipedReader r){
-            writer = w;
-            reader = r;
-        }
 
         @Override
         public void run(){
@@ -196,8 +175,8 @@ public class FirstActivity extends AppCompatActivity {
                 Log.w(TAG, "socket connected");
 
 
-                threadRece = new Thread(new Receive(socket,"Client",reader));
-                threadSend = new Thread(new Send(socket,"Client", writer));
+                threadRece = new Thread(new Receive(socket));
+                threadSend = new Thread(new Send(socket));
                 threadRece.start();
                 threadSend.start();
             } catch (IOException e) {
@@ -210,18 +189,13 @@ public class FirstActivity extends AppCompatActivity {
 
     class Receive implements Runnable{
         private Socket socket;
-        private String role;
-        private PipedWriter w = new PipedWriter();
-        Receive(Socket socket, String role , PipedReader r) throws IOException {
+        Receive(Socket socket) throws IOException {
             System.out.println("here");
             this.socket = socket;
-            this.role = role;
-            this.w.connect(r);
         }
 
         @Override
         public void run(){
-
             try {
                 DataInputStream input = new DataInputStream(socket.getInputStream());
 //            DES des = new DES("pass");
@@ -250,39 +224,35 @@ public class FirstActivity extends AppCompatActivity {
 
     class Send implements Runnable{
         private Socket socket;
-        private String role;
-        private PipedReader r = new PipedReader();
-        Send(Socket socket, String role, PipedWriter w) throws IOException {
+        private LocalBroadcastManager broadcastManager;
+        BroadcastReceiver broadcastReceiver;
+        Send(Socket socket) throws IOException {
             this.socket = socket;
-            this.role = role;
-            this.r.connect(w);
-            Log.w(TAG, "Send: bind" );
+            broadcastManager = LocalBroadcastManager.getInstance(getBaseContext());
+            broadcastManager.registerReceiver(broadcastReceiver,new IntentFilter("socketSend"));
+            Log.w(TAG, "SendThread : init" );
         }
 
         @Override
         public void run() {
-            int i = 0;
-            String str="";
-            Log.w(TAG, "run: "+socket.toString() );
-            try {
-                while(true) {
-                    if (r.ready()) {
-                        r.read();
-                        r.read();
-                        str = ((EditText) findViewById(R.id.socketInput)).getText().toString();
-                        Log.w(TAG, "str " + str);
-                        DataOutputStream out = null;
+            Log.w(TAG, "SendThread socket id run: " + socket.toString());
 
+            broadcastReceiver = new BroadcastReceiver() {
+                @Override
+                public void onReceive(Context context, Intent intent) {
+                    String str = intent.getStringExtra("send");
+                    Log.w(TAG, "str " + str);
+                    try {
+                        DataOutputStream out = null;
                         out = new DataOutputStream(socket.getOutputStream());
                         Log.w(TAG, "260: " + str);
                         out.writeUTF(str);
-                        continue;
+                    } catch (IOException e) {
+                        e.printStackTrace();
                     }
+
                 }
-            } catch (IOException  e) {
-                e.printStackTrace();
-            }
+            };
         }
     }
-
 }
