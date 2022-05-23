@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".MainActivity">
+
+
+    <ImageView
+        android:id="@+id/imageUser"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.045"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.28"
+        app:srcCompat="@drawable/user"
+        tools:ignore="ContentDescription" />
+
+    <ImageView
+        android:id="@+id/imageUnlock"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginTop="36dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.045"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageUser"
+        app:layout_constraintVertical_bias="0"
+        app:srcCompat="@drawable/unlock"
+        tools:ignore="ContentDescription" />
+
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/inputUser"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="188dp"
+        android:hint="ID"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_percent="0.08"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/imageUser"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintWidth_percent="0.7" />
+
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/inputPassword"
+        android:inputType="textPassword"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="40dp"
+        android:allowUndo="true"
+        android:hint="Password"
+        android:rotationX="1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_percent="0.08"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/imageUnlock"
+        app:layout_constraintTop_toBottomOf="@+id/inputUser"
+        app:layout_constraintWidth_percent="0.7"
+        android:layout_height="0dp"
+        android:layout_width="0dp"/>
+
+    <Button
+        android:id="@+id/buttonLogin"
+        app:layout_constraintHeight_percent="0.08"
+        app:layout_constraintWidth_percent="0.25"
+        android:layout_marginStart="76dp"
+        android:layout_marginTop="28dp"
+        android:backgroundTintMode="screen"
+        android:text="登陆"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageUnlock"
+        app:layout_constraintVertical_bias="0.05"
+        android:layout_height="0dp"
+        android:layout_width="0dp"/>
+
+    <Button
+        android:id="@+id/buttonRegister"
+        android:text="注册"
+        app:layout_constraintBaseline_toBaselineOf="@+id/buttonLogin"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_percent="0.08"
+        app:layout_constraintHorizontal_bias="0.596"
+        app:layout_constraintStart_toEndOf="@+id/buttonLogin"
+        app:layout_constraintWidth_percent="0.25"
+        android:layout_height="0dp"
+        android:layout_width="0dp"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

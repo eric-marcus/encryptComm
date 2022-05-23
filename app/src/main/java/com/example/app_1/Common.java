@@ -1,38 +1,75 @@
 package com.example.app_1;
 
-import android.app.Activity;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.Toast;
+import android.app.ActivityManager;
+import android.content.ComponentName;
+import android.content.Context;
+import android.text.TextUtils;
 
-import java.io.BufferedReader;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
+import com.google.android.material.textfield.TextInputEditText;
+
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import java.net.Socket;
+import java.util.List;
+
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 public class Common {
-    private static Activity activity;
-    private static View view;
+    public final static OkHttpClient client = new OkHttpClient();
+    private final static String ip = "http://bigcat.tech:8080";
+    public static Request requestLogin = new Request.Builder().url(ip+"/encrypt/login").build();
+    public static Request requestRegister = new Request.Builder().url(ip+"/encrypt/register").build();
+    public static Request requestChat = new Request.Builder().url(ip+"/encrypt/chat").build();
+    public static Response response;
 
-    Common(Activity activity , View view){
-        Common.activity = activity;
-        Common.view = view;
-    }
 
-    public static View onClick(){
-        view.setOnClickListener(new View.OnClickListener() {
+    public static String doPost(Request request, RequestBody fillBody) throws IOException {
+        new Thread(new Runnable() {
             @Override
-            public void onClick(View v) {
-                Toast.makeText(activity,"ss",Toast.LENGTH_LONG).show();
+            public void run() {
+                try{
+                    response = client.newCall(request.newBuilder().post(fillBody).build()).execute();
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
             }
-        });
-        return view;
+        }).start();
+        return response.body().string();
     }
+
+    public static boolean isEmpty(TextInputEditText view){
+        if(view.getText().length() == 0){
+            view.setError("请完善信息");
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * 判断某个界面是否在前台
+     *
+     * @param context Activity的getAppliction()获取
+     * @param className Activity名称 由类名.class.getName()获取
+     *
+     */
+    public static boolean isForeground(Context context, String className) {
+        if (context == null || TextUtils.isEmpty(className)) {
+            return false;
+        }
+        ActivityManager am =(ActivityManager)context.getSystemService(Context.ACTIVITY_SERVICE);
+        List<ActivityManager.RunningTaskInfo> list = am.getRunningTasks(1);
+        if (list != null && list.size() > 0) {
+            ComponentName cpn = list.get(0).topActivity;
+            if (className.equals(cpn.getClassName())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+
 }
 
 
