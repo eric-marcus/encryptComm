@@ -15,6 +15,13 @@
         </option>
         <option name="resolveModulePerSourceSet" value="false" />
       </GradleProjectSettings>
+      <GradleProjectSettings>
+        <option name="testRunner" value="GRADLE" />
+        <option name="distributionType" value="DEFAULT_WRAPPED" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="gradleHome" value="$PROJECT_DIR$/../gradle/gradle-5.3" />
+        <option name="resolveModulePerSourceSet" value="false" />
+      </GradleProjectSettings>
     </option>
   </component>
 </project>

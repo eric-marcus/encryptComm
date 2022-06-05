@@ -73,7 +73,7 @@
         android:layout_marginStart="76dp"
         android:layout_marginTop="28dp"
         android:backgroundTintMode="screen"
-        android:text="登陆"
+        android:text="登录"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageUnlock"

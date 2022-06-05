@@ -1,14 +1,8 @@
 package com.example.app_1;
 
-import android.app.ActivityManager;
-import android.content.ComponentName;
-import android.content.Context;
-import android.text.TextUtils;
-
 import com.google.android.material.textfield.TextInputEditText;
 
 import java.io.IOException;
-import java.util.List;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -46,27 +40,34 @@ public class Common {
         return false;
     }
 
-    /**
-     * 判断某个界面是否在前台
-     *
-     * @param context Activity的getAppliction()获取
-     * @param className Activity名称 由类名.class.getName()获取
-     *
-     */
-    public static boolean isForeground(Context context, String className) {
-        if (context == null || TextUtils.isEmpty(className)) {
-            return false;
+    public static Algorithm getAlgorithm(String name) throws Exception {
+        String className = null;
+        switch (name){
+            case "AES":
+                className = "com.example.app_1.AES";
+                break;
+            case "DES":
+                className = "com.example.app_1.DES";
+                break;
+            case "3DES":
+                className = "com.example.app_1.3DES";
+                break;
+            default:
+                break;
         }
-        ActivityManager am =(ActivityManager)context.getSystemService(Context.ACTIVITY_SERVICE);
-        List<ActivityManager.RunningTaskInfo> list = am.getRunningTasks(1);
-        if (list != null && list.size() > 0) {
-            ComponentName cpn = list.get(0).topActivity;
-            if (className.equals(cpn.getClassName())) {
-                return true;
-            }
-        }
-        return false;
+        Algorithm algorithm = (Algorithm) Algorithm.getAlgorithm(className);
+        algorithm.setFunName(name);
+        return algorithm;
     }
+
+    public static String enBase64(byte[] bytes){
+        return android.util.Base64.encodeToString(bytes, 2);
+    }
+
+    public static byte[] deBase64(byte[] bytes){
+        return android.util.Base64.decode(bytes, 2);
+    }
+
 
 
 

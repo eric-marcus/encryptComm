@@ -7,65 +7,54 @@ android:layout_height="match_parent"
 android:orientation="vertical"
 tools:context=".MainActivity">
 
-<com.google.android.material.textfield.TextInputEditText
-    android:id="@+id/inputRegisterEmail"
-    android:layout_width="0dp"
-    android:layout_height="0dp"
-    android:layout_marginEnd="24dp"
-    android:typeface="normal"
-    app:layout_constraintBottom_toBottomOf="parent"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintHeight_percent="0.08"
-    app:layout_constraintTop_toTopOf="parent"
-    app:layout_constraintVertical_bias="0.194"
-    app:layout_constraintWidth_percent="0.7" />
-
     <com.google.android.material.textfield.TextInputEditText
         android:id="@+id/inputRegisterNickName"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="32dp"
-        android:layout_marginEnd="24dp"
+        android:layout_marginEnd="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHeight_percent="0.08"
         app:layout_constraintTop_toBottomOf="@+id/inputRegisterEmail"
         app:layout_constraintWidth_percent="0.7" />
 
-    <com.google.android.material.textfield.TextInputEditText
-        android:id="@+id/inputRegisterPassword"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginTop="28dp"
-        android:layout_marginEnd="24dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHeight_percent="0.08"
-        app:layout_constraintTop_toBottomOf="@+id/inputRegisterNickName"
-        app:layout_constraintWidth_percent="0.7" />
-
-    <com.google.android.material.textfield.TextInputEditText
-        android:id="@+id/inputRegisterEnsure"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginTop="28dp"
-        android:layout_marginEnd="24dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHeight_percent="0.08"
-        app:layout_constraintTop_toBottomOf="@+id/inputRegisterPassword"
-        app:layout_constraintWidth_percent="0.7" />
-
     <Button
-    android:id="@+id/buttonRegisterSubmit"
-    android:layout_width="108dp"
-    android:layout_height="61dp"
-    android:layout_marginBottom="152dp"
-    android:text="提交"
-    android:textSize="20sp"
-    app:layout_constraintBottom_toBottomOf="parent"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintHorizontal_bias="0.881"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toBottomOf="@+id/inputRegisterEnsure"
-    app:layout_constraintVertical_bias="0.803" />
+        android:id="@+id/buttonRegisterSubmit"
+        android:layout_width="108dp"
+        android:layout_height="61dp"
+        android:layout_marginBottom="152dp"
+        android:text="提交"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.907"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/inputRegisterEnsure"
+        app:layout_constraintVertical_bias="0.807" />
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="60dp"
+        android:layout_marginEnd="16dp"
+        android:text="密 码"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toStartOf="@+id/inputRegisterPassword"
+        app:layout_constraintTop_toBottomOf="@+id/textView2"
+        tools:ignore="MissingConstraints" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="64dp"
+        android:layout_marginEnd="16dp"
+        android:text="昵 称"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toStartOf="@+id/inputRegisterNickName"
+        app:layout_constraintTop_toBottomOf="@+id/textView"
+        tools:ignore="MissingConstraints" />
 
     <TextView
         android:id="@+id/textView"
@@ -83,30 +72,6 @@ tools:context=".MainActivity">
         tools:ignore="MissingConstraints" />
 
     <TextView
-        android:id="@+id/textView2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="64dp"
-        android:layout_marginEnd="16dp"
-        android:text="昵 称"
-        android:textSize="20sp"
-        app:layout_constraintEnd_toStartOf="@+id/inputRegisterNickName"
-        app:layout_constraintTop_toBottomOf="@+id/textView"
-        tools:ignore="MissingConstraints" />
-
-    <TextView
-        android:id="@+id/textView3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="60dp"
-        android:layout_marginEnd="16dp"
-        android:text="密 码"
-        android:textSize="20sp"
-        app:layout_constraintEnd_toStartOf="@+id/inputRegisterPassword"
-        app:layout_constraintTop_toBottomOf="@+id/textView2"
-        tools:ignore="MissingConstraints" />
-
-    <TextView
         android:id="@+id/textView4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -114,9 +79,47 @@ tools:context=".MainActivity">
         android:layout_marginEnd="16dp"
         android:text="确认密码"
         android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/inputRegisterEnsure"
         app:layout_constraintTop_toBottomOf="@+id/textView3"
+        app:layout_constraintVertical_bias="0.0"
         tools:ignore="MissingConstraints" />
+
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/inputRegisterEnsure"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_percent="0.08"
+        app:layout_constraintTop_toBottomOf="@+id/inputRegisterPassword"
+        app:layout_constraintWidth_percent="0.7" />
+
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/inputRegisterEmail"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:typeface="normal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_percent="0.08"
+        app:layout_constraintHorizontal_bias="0.869"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.194"
+        app:layout_constraintWidth_percent="0.7" />
+
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/inputRegisterPassword"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_percent="0.08"
+        app:layout_constraintTop_toBottomOf="@+id/inputRegisterNickName"
+        app:layout_constraintWidth_percent="0.7" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

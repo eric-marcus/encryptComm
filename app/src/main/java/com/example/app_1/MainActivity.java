@@ -1,6 +1,7 @@
 package com.example.app_1;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -50,9 +51,11 @@ public class MainActivity extends AppCompatActivity {
                                     .add("psd", inputPassword.getText().toString())
                                     .build();
                             try {
-                                response = Common.doPost(Common.requestLogin, body);
+//                                response = Common.doPost(Common.requestLogin, body);
+                                Intent intent = new Intent(MainActivity.this, SettingActivity.class);
+                                startActivity(intent);
                                 Toast.makeText(MainActivity.this, "do send" + response, Toast.LENGTH_SHORT).show();
-                            } catch (IOException e) {
+                            } catch (Exception e) {
                                 e.printStackTrace();
                             }
                         }

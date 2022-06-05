@@ -1,6 +1,9 @@
 package com.example.app_1;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.View;
@@ -14,6 +17,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 
 public class ChatActivity extends AppCompatActivity {
     protected String TAG = "firstActivity";
@@ -24,6 +28,8 @@ public class ChatActivity extends AppCompatActivity {
     TextView socketReceive;
     Button send;
     Socket socket ;
+    Algorithm algorithm;
+    String token;
 
 
     @Override
@@ -31,10 +37,42 @@ public class ChatActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.page_chat);
 
+        Intent intent = getIntent();
+        try {
+            algorithm = Common.getAlgorithm(intent.getStringExtra("sEncrypt"));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+//        Toast.makeText(ChatActivity.this, intent.getStringExtra("sEncrypt"), Toast.LENGTH_SHORT).show();
+//        Toast.makeText(ChatActivity.this, intent.getStringExtra("asEncrypt"), Toast.LENGTH_SHORT).show();
+//        Toast.makeText(ChatActivity.this, intent.getStringExtra("encode"), Toast.LENGTH_SHORT).show();
+
         socketInput = (EditText)  findViewById(R.id.socketInput);
         socketReceive = (TextView) findViewById(R.id.socketReceive);
         socketReceive.setMovementMethod(ScrollingMovementMethod.getInstance());
         send = (Button) findViewById(R.id.send);
+
+
+
+        socketInput.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                if(charSequence.toString().equals(""))
+                    send.setEnabled(false);
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                if(!charSequence.toString().equals(""))
+                    send.setEnabled(true);
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                if(editable.toString().equals(""))
+                    send.setEnabled(false);
+            }
+        });
 
         send.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -45,10 +83,15 @@ public class ChatActivity extends AppCompatActivity {
                     public void run(){
                         try {
                             DataOutputStream out = new DataOutputStream(socket.getOutputStream());
-                            out.writeUTF(socketInput.getText().toString());
+                            if(token == null) {
+                                token = socketInput.getText().toString();
+                                algorithm.setNoise(token);
+                                Log.w("token&&&&", token);
+                            }
+//                            Common.enBase64((byte[]) algorithm.encrypt(socketInput.getText().toString()));
+                            out.writeUTF(Common.enBase64((byte[]) algorithm.encrypt(socketInput.getText().toString())));
                             out.flush();
-
-                        } catch (IOException e) {
+                        } catch (Exception e) {
                             e.printStackTrace();
                         }
                     }
@@ -58,42 +101,6 @@ public class ChatActivity extends AppCompatActivity {
         });
 
         new Thread(new SocketThread()).start();
-
-//        send.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                try {
-//                    DataOutputStream out = new DataOutputStream(socket.getOutputStream());
-//                    out.writeUTF(socketInput.getText().toString());
-//                    out.flush();
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        });
-
-        //        LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(this);
-//        Intent intent = new Intent("socketSend");
-
-
-
-//        BroadcastReceiver receiver = new BroadcastReceiver() {
-//            @Override
-//            public void onReceive(Context context, Intent intent) {
-//                socketReceive.setText(intent.getStringExtra("info"));
-//            }
-//        };
-//        localBroadcastManager.registerReceiver(receiver,new IntentFilter("receive"));
-//
-//        socketThread.start();
-//
-//        send.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                intent.putExtra("send",socketInput.getText().toString());
-//                localBroadcastManager.sendBroadcast(intent);
-//            }
-//        });
 
 
 
@@ -111,41 +118,10 @@ public class ChatActivity extends AppCompatActivity {
 
         Algorithm finalAlgorithm = algorithm;
 
-//        text1.addTextChangedListener(new TextWatcher() {
-//            @Override
-//            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
-//            @Override
-//            public void onTextChanged(CharSequence s, int start, int before, int count) { }
-//            @Override
-//            public void afterTextChanged(Editable s) {
-//                try {
-//                    String temp = new String(s.toString());
-//                    Log.w(TAG, temp );
-//                    finalAlgorithm.setInfo(temp);
-//                    String output = new String((byte[]) finalAlgorithm.encrypt());
-//
-//                    text2.setText(output);
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        });
-//
-//        button.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                try {
-//                    String de = new String((byte[]) finalAlgorithm.decrypt());
-//                    Log.w(TAG, de);
-//                    text2.setText(de);
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        });
-
 
     }
+
+
 
     @Override
     protected void onStart() {
@@ -158,37 +134,11 @@ public class ChatActivity extends AppCompatActivity {
         public void run(){
             try {
                 socket = new Socket(ip,port);
-
-
-
-
-//                ChatActivity.this.runOnUiThread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        button.setOnClickListener(new View.OnClickListener() {
-//                            @Override
-//                            public void onClick(View view) {
-//                                try {
-//                                    DataOutputStream out = new DataOutputStream(socket.getOutputStream());
-//                                    Log.w("&&&&&&&&&&", socketInput.getText().toString());
-//                                    out.writeUTF(socketInput.getText().toString());
-//                                    out.flush();
-//                                } catch (IOException e) {
-//                                    e.printStackTrace();
-//                                }
-//                            }
-//                        });
-//                    }
-//                });
-
-
-                socket.setSoTimeout(200 * 1000);
+                socket.setSoTimeout(120 * 1000);
                 Log.w(TAG, "socket connected");
 
 
                 new Thread(new Receive(socket)).start();
-//                threadSend = new Thread(new Send(socket));
-//                threadSend.start();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -210,7 +160,7 @@ public class ChatActivity extends AppCompatActivity {
             try {
                 DataInputStream input = new DataInputStream(socket.getInputStream());
                 while (true){
-                    String receive = input.readUTF();
+                    String receive = new String((byte[]) algorithm.decrypt(Common.deBase64(input.readUTF().getBytes(StandardCharsets.UTF_8))));
                     Log.w(TAG, receive );
 
                     if(!receive.equals(null)){
@@ -222,57 +172,9 @@ public class ChatActivity extends AppCompatActivity {
                         });
                     }
                 }
-            } catch (IOException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
     }
-
-
-
-//    class Send implements Runnable{
-//        private Socket socket;
-//        //        private LocalBroadcastManager broadcastManager;
-////        BroadcastReceiver broadcastReceiver;
-//        Send(Socket socket) throws IOException {
-//            this.socket = socket;
-////            broadcastManager = LocalBroadcastManager.getInstance(getBaseContext());
-////            broadcastManager.registerReceiver(broadcastReceiver,new IntentFilter("socketSend"));
-//            Log.w(TAG, "SendThread : init" );
-//        }
-//
-//        @Override
-//        public void run() {
-//            Log.w(TAG, "SendThread socket id run: " + socket.toString());
-//            String str = socketInput.getText().toString();
-//            Log.w("send thread run:", str);
-//            try {
-////                OutputStream outputStream = socket.getOutputStream();
-////                BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(outputStream));
-//                DataOutputStream out = new DataOutputStream(socket.getOutputStream());
-//                out.writeUTF(str);
-//                out.flush();
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//
-////            broadcastReceiver = new BroadcastReceiver() {
-////                @Override
-////                public void onReceive(Context context, Intent intent) {
-//////                    String str = intent.getStringExtra("send");
-////                    String str = socketInput.getText().toString();
-////                    Log.w(TAG, "str " + str);
-////                    try {
-////                        DataOutputStream out = null;
-////                        out = new DataOutputStream(socket.getOutputStream());
-////                        Log.w(TAG, "260: " + str);
-////                        out.writeUTF(str);
-////                    } catch (IOException e) {
-////                        e.printStackTrace();
-////                    }
-////
-////                }
-////            };
-//        }
-//    }
 }

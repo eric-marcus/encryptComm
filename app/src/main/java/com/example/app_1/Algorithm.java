@@ -1,28 +1,27 @@
 package  com.example.app_1;
 
+import java.nio.charset.StandardCharsets;
+import java.security.Key;
+import java.security.spec.KeySpec;
+
 import javax.crypto.Cipher;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.DESKeySpec;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
-import java.nio.charset.StandardCharsets;
-import java.security.Key;
-import java.security.spec.KeySpec;
 
 public class Algorithm {
-    protected Object info = null;
     protected Object noise = null;
     protected Object sound = null;
     protected String funName;
 
 
-    public void setInfo(String str){info = str;}
     public void setNoise(String str){noise = str;}
     public void setFunName(String str){funName = str;}
 
 
-    public Object encrypt() throws Exception {return null;}
-    public Object decrypt() throws Exception {return null;}
+    public Object encrypt(Object param) throws Exception {return null;}
+    public Object decrypt(Object param) throws Exception {return null;}
 //    public void test(){}
 
     public static Object getAlgorithm(String Name) throws Exception {
@@ -52,11 +51,13 @@ public class Algorithm {
     }
 
 
+
+
 }
 
 class DES extends Algorithm{
 
-    public byte[] encrypt() throws Exception {
+    public byte[] encrypt(Object info) throws Exception {
         if(info == null && noise == null){
             System.out.println("have null input");
             return null;
@@ -66,11 +67,11 @@ class DES extends Algorithm{
         cipher.init(Cipher.ENCRYPT_MODE,key);
         byte[] bytesInfo = info.toString().getBytes(StandardCharsets.UTF_8);
         byte[] bytes = cipher.doFinal(bytesInfo);
-        sound = bytes;
+//        sound = bytes;
         return bytes;
     }
 
-    public byte[] decrypt() throws Exception {
+    public byte[] decrypt(Object sound) throws Exception {
         if(sound == null && noise == null && funName == null){
             System.out.println("have null input");
             return null;
@@ -80,31 +81,31 @@ class DES extends Algorithm{
         cipher.init(Cipher.DECRYPT_MODE,key);
         byte[] bytesSound = (byte[]) sound;
         byte[] bytes = cipher.doFinal(bytesSound);
-        info = bytes;
+//        info = bytes;
         return bytes;
     }
 }
 
 class AES extends Algorithm{
-    public byte[] encrypt() throws Exception{
+    public byte[] encrypt(Object info) throws Exception{
         byte[] salt = getFormedNoise(8);
         Key key = createKey(new PBEKeySpec(noise.toString().toCharArray(),salt,66,256),"PBKDF2WithHmacSHA256");
         Cipher cipher = Cipher.getInstance(funName);
         cipher.init(Cipher.ENCRYPT_MODE,key);
         byte[] bytesInfo = info.toString().getBytes(StandardCharsets.UTF_8);
         byte[] bytes = cipher.doFinal(bytesInfo);
-        sound = bytes;
+//        sound = bytes;
         return bytes;
     }
 
-    public byte[] decrypt() throws Exception{
+    public byte[] decrypt(Object sound) throws Exception{
         byte[] salt = getFormedNoise(8);
         Key key = createKey(new PBEKeySpec(noise.toString().toCharArray(),salt,66,256),"PBKDF2WithHmacSHA256");
         Cipher cipher = Cipher.getInstance(funName);
         cipher.init(Cipher.DECRYPT_MODE,key);
         byte[] bytesSound = (byte[]) sound;
         byte[] bytes = cipher.doFinal(bytesSound);
-        info = bytes;
+//        info = bytes;
         return bytes;
     }
 }
